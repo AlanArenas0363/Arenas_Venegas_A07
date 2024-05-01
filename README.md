@@ -12,7 +12,10 @@ El byte 00001001 ahora representa una secuencia de letras "C", "O" y "M", pero e
 
 ## Objetivos:
 
-En esta parte del entregable, tocaría implementar el FrontEnd del programa final, osease que va a capturar la frecuencia de carácteres del texto y los enlistará. Esto para que cuando se haga la parte del BackEnd, solamente quedaría agregarle la parte del Árbol de Huffman. Esto lo podemos desarrollar ya con la utilizada librería de Python, Tkinter, en la cual como se ha mencionado, es una librería de interfaz gráfica con multiples funciones como ya sea el filedialog, en la cual nos permitirá leer el archivo deseado para así poder hacer el cálculo de frecuencia de carácteres.
+En la primera parte del entregable, tocaría implementar el FrontEnd del programa final, osease que va a capturar la frecuencia de carácteres del texto y los enlistará. Esto para que cuando se haga la parte del BackEnd, solamente quedaría agregarle la parte del Árbol de Huffman. Esto lo podemos desarrollar ya con la utilizada librería de Python, Tkinter, en la cual como se ha mencionado, es una librería de interfaz gráfica con múltiples funciones como ya sea el filedialog, en la cual nos permitirá leer el archivo deseado para así poder hacer el cálculo de frecuencia de caracteres.
+
+En esta segunda parte del entregable, tocaría implementar el BackEnd del programa final, osease que va a comprimir y descomprimir el archivo. Esto se va a lograr gracias al árbol de Huffman que se va a ejecutar a segundo plano. Así cuando el usuario quiera usarlos, sería por las funciones Comprensión y Descomprensión.
+
 
 ## Desarrollo:
 
@@ -59,10 +62,94 @@ def calcuFrecuencia(contenido):
 
 Y para la función de mostrar resultados, simplemente es una ventana con un ciclo for, para todas las letras que hay en la cadena de texto.
 
+### Entregable 2:
+#### Implementación del algoritmo al código final:
+
+Para esta parte, tocaría primero armar el algoritmo, pero en otro código de otra persona. Ya que esto es la segunda entrega. El dueño original de este código es de: Dario Rivera Haro.
+
+Su código tiene las opciones requeridas anteriormente, Examinar, Comprimir y Descomprimir. Lo que vamos a trabajar es las partes de comprimir y descomprimir.
+
+Para empezar, haremos la clase para el árbol de Huffman:
+
+#* Nodo para el árbol de Huffman
+class NodoHuffman:
+
+    #* Constructor de la clase
+    def __init__(self, caracter, frecuencia):
+        #* Caracter representado por el nodo
+        self.caracter = caracter
+        #* Frecuencia representado por el nodo
+        self.frecuencia = frecuencia
+        #* Referencia al nodo hijo izquierdo
+        self.izquierda = None
+        #* Referencia al nodo hijo derecho
+        self.derecha = None
+
+    #* Método para comparar nodos basado en sus frecuencias
+    def __lt__(self, otro):
+        return self.frecuencia < otro.frecuencia
+
+
+Luego la función de constructor del árbol de Huffman.
+
+#* Función para construir el árbol de Huffman
+def construir_arbol_huffman(diccionario):
+
+    heap = [NodoHuffman(caracter, frecuencia) for caracter, frecuencia in dicciona-rio.items()]
+    #* Convierte la lista en un heap (cola de prioridad)
+    heapq.heapify(heap)
+    while len(heap) > 1:
+        izquierda = heapq.heappop(heap)
+        derecha = heapq.heappop(heap)
+        nodo = NodoHuffman(None, izquierda.frecuencia + derecha.frecuencia)
+        nodo.izquierda = izquierda
+        nodo.derecha = derecha
+        heapq.heappush(heap, nodo)
+    #* Retorna la raíz del árbol de Huffman
+    return heap[0]
+
+Y para comprimir archive, tiene que ser el archivo abierto (.txt) y para la descomprensión, sería abrir el archivo ‘.bat’ y así podrá seguir con la ejecución del código.
+
+def comprimir_archivo(archivo):
+
+    with open(archivo, 'r') as f:
+        contenido = f.read()
+        frecuencias = {}
+        for caracter in contenido:
+            caracter = caracter.lower()
+            if caracter.isalpha() or caracter.isspace():
+                if caracter in frecuencias:
+                    frecuencias[caracter] += 1
+                else:
+                    frecuencias[caracter] = 1
+        arbol = construir_arbol_huffman(frecuencias)
+        codigos = {}
+        generar_codigos_huffman(arbol, '', codigos)
+        archivo_comprimido = archivo + '.bat'
+        with open(archivo_comprimido, 'w') as f_comp:
+            for caracter in contenido:
+                caracter = caracter.lower()
+                if caracter in codigos:
+                    f_comp.write(codigos[caracter])
+        return archivo_comprimido
+
+def descomprimir_archivo(archivo_comprimido):
+
+    with open(archivo_comprimido, 'r') as f:
+        contenido = f.read()
+        archivo_descomprimido = archivo_comprimido.replace('.bat', '.txt')
+        with open(archivo_descomprimido, 'w') as f_descomp:
+            f_descomp.write(contenido)
+        return archivo_descomprimido
+
+
 ## Conclusión:
 
 ### Entregable 1:
 En esta parte de la actividad se me hizo facíl, ya que es lo que más hemos trabajado en el semestre. Acerca de la interfaz, como leer un archivo y que haga sus operaciones. Agregué cosas extras como por ejemplo el try y except, por si no se llegara a leer el archivo correctamente. Una cosa que no he trabajado, es la parte de 'Counter' ya que no lo hemos trabajado anteriormente en el semestre.
+
+### Entregable 2:
+En esta parte, se me complicó más. Ya que si era más complicado la parte del arbol de Huffman, para las partes de comprensión y descomprensión no tanto, aparte que le pude agregar algo más, la cual es la parte de 'Alertas' del Tkinter. Este tendría como función nada más en donde se ha guardado el archivo en vez de que el usuario eliga donde. Esto para ahorrar tiempo y que sea más automatizado el algorimo.
 
 ## Referencias:
 
